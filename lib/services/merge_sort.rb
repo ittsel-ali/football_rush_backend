@@ -8,7 +8,7 @@ module MergeSort
     left  = list [0,mid]
     right = list [mid, list.size]
     
-    merge(mergesort(left),mergesort(right))
+    merge(sort(left),sort(right))
   end
 
   private
@@ -17,7 +17,7 @@ module MergeSort
     sorted = []
     
     until left.empty? || right.empty?
-      if left.first > right.first
+      if left.first < right.first
         sorted << left.shift
       else
         sorted << right.shift

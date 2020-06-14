@@ -17,7 +17,9 @@ module Rush
     opts = args[:options] || {}
     data = args[:records] || load_json
 
-    data = Filter.by_number(data, opts.keys.first, opts[opts.keys.first])
+    opts.each do |field, value|
+      data = Filter.by_number(data, field, value)
+    end
 
     offset = args[:offset]
     limit  = args[:limit]
@@ -30,7 +32,11 @@ module Rush
     if offset and limit
       sorted_index = sorted_index[offset*limit, limit]
     end
-
+    
+    if sorted_index.blank?
+      return data
+    end
+  
     sorted_index.map do |link|
       data[ indexer.find(link) ]
     end
