@@ -1,47 +1,46 @@
-module Rush
+class Rush
+  attr_accessor :records
   
+  def initialize(*args)
+    @records = args.slice!(0) || load_json
+  end
+
   def filter(*args)
     args = args.slice!(0) || {}
-    
-    opts = args[:options] || {}
-    data = args[:records] || load_json
+    key = args[:field]
+    val = args[:search]
 
-    data.reject do |rush|
-
-    end
+    Filter.by_string(records, key, val)
   end
 
   def sort(*args)
     args = args.slice!(0) || {}
     
-    opts = args[:options] || {}
-    data = args[:records] || load_json
+    fild = args[:field]  || nil
+    data = args[:records] || records
 
-    opts.each do |field, value|
-      data = Filter.by_number(data, field, value)
-    end
-
-    offset = args[:offset]
-    limit  = args[:limit]
+    offset = (args[:offset] || 0).to_i
+    limit  = (args[:limit]  || data.count).to_i
 
     indexer = Indexer.new
-    indexer.perform_indexing( data, opts )
+    indexer.perform_indexing( data, fild )
 
-    sorted_index = MergeSort.sort( indexer.get_index_hash.keys )
-    
-    if offset and limit
-      sorted_index = sorted_index[offset*limit, limit]
-    end
+    sorted_index = MergeSort.sort(indexer.get_index_hash.keys)
+    sorted_index = sorted_index[offset*limit, limit]
     
     if sorted_index.blank?
-      return data
+      return data[offset*limit, limit]
     end
+
   
-    sorted_index.map do |link|
-      data[ indexer.find(link) ]
+    sorted_index.map do |id|
+      data[ indexer.find(id) ]
     end
   end
-  
+
+  def total_records
+    records.count
+  end
 
   private 
   
@@ -49,7 +48,5 @@ module Rush
     ActiveSupport::JSON.decode( File.read('app/models/rushing.json') )
   end
 
-  module_function :load_json
-  module_function :sort
-  module_function :filter
+  
 end

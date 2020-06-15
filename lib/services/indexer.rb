@@ -11,7 +11,7 @@ class Indexer
     hashArray.each_with_index do |record, i|
       key = generate_key(record, options)
 
-      @index_hash[ key.concat("@#{i}") ] = i
+      @index_hash[ key ] = i
     end
 
     @index_hash
@@ -29,9 +29,6 @@ class Indexer
   private 
   
   def generate_key(record, options)
-    options.map do |key_option, v| 
-      record[key_option].to_s
-    end
-    .join(',')
+    record[options].to_s.gsub(/[^0-9\.\-]/,'').to_f
   end
 end 

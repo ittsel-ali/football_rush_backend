@@ -1,8 +1,10 @@
 module Filter
 
-  def by_string
+  def by_string(rows, key, value)
+    return rows unless key and value
+    
     filter rows, key, value do |row|
-        row[key] == value 
+        not row[key].downcase.include? value.downcase 
     end
   end
 
