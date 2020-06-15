@@ -1,3 +1,5 @@
+require 'csv'
+
 class Rush
   attr_accessor :records
   
@@ -7,10 +9,11 @@ class Rush
 
   def filter(*args)
     args = args.slice!(0) || {}
+    
     key = args[:field]
     val = args[:search]
 
-    Filter.by_string(records, key, val)
+    self.records = Filter.by_string(self.records, key, val)
   end
 
   def sort(*args)
@@ -31,7 +34,6 @@ class Rush
     if sorted_index.blank?
       return data[offset*limit, limit]
     end
-
   
     sorted_index.map do |id|
       data[ indexer.find(id) ]
@@ -40,6 +42,18 @@ class Rush
 
   def total_records
     records.count
+  end
+
+  def generate_csv(records)
+    return nil unless records.present?
+    
+    csv_string = CSV.generate do |csv|
+      csv << records[0]&.keys
+      
+      records.each do |record|
+        csv << record.values
+      end
+    end
   end
 
   private 
