@@ -13,11 +13,11 @@ module MergeSort
 
   private
   
-  def merge(left, right)
+  def merge(left, right, scheme=:to_f)
     sorted = []
     
     until left.empty? || right.empty?
-      if left.first < right.first
+      if left.first.send(scheme) < right.first.send(scheme)
         sorted << left.shift
       else
         sorted << right.shift

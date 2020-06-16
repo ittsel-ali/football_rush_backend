@@ -6,12 +6,10 @@ class Indexer
   def perform_indexing(hashArray, options)
     return @index_hash unless options.present?
 
-    @index_hash = {}
-
     hashArray.each_with_index do |record, i|
       key = generate_key(record, options)
 
-      @index_hash[ key ] = i
+      @index_hash[ "#{key}@#{i}" ] = i
     end
 
     @index_hash
