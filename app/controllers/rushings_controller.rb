@@ -17,12 +17,12 @@ class RushingsController < ApplicationController
 
   def download_csv
     records = @rush.sort(field: params[:sort_field])
-    csv_string = @rush.generate_csv( records )
+    csvfile = @rush.generate_csv_file( records )
       
     respond_to do |format|
         format.csv {
-            send_data csv_string, 
-              :type => 'text/csv; charset=utf-8; header=present', 
+            ## send_file streams the file while send_data do not
+            send_file csvfile.path, 
               :disposition => "attachment; filename=rushing.csv", 
               :filename => "rushing.csv"
         }

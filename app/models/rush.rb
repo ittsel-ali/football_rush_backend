@@ -56,6 +56,18 @@ class Rush
     end
   end
 
+  def generate_csv_file(records)
+    csv_string = generate_csv(records)
+
+    file = Tempfile.new(['rushing-', '.csv'])
+    file.write(csv_string)
+    file.rewind
+    file.close
+    
+    file
+  end
+
+
   private 
   
   def load_json
